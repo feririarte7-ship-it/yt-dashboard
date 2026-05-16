@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Dashboard — Chains of Brains</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0f14;
+      --surface: #161b24;
+      --surface2: #1e2635;
+      --border: #2a3347;
+      --text: #e8ecf4;
+      --muted: #6b7a99;
+      --cyan: #00d4ff;
+      --green: #00e676;
+      --red: #ff4757;
+      --purple: #7c5cfc;
+      --gold: #ffd32a;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--cyan);
+      letter-spacing: -0.3px;
+    }
+
+    .logo svg { opacity: 0.9; }
+
+    .meta {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .meta span { color: var(--text); font-weight: 500; }
+
+    main { padding: 32px; max-width: 1400px; margin: 0 auto; }
+
+    /* Summary bar */
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .stat-card .label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .stat-card .value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--cyan);
+      line-height: 1;
+    }
+
+    .stat-card .sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* Channel cards */
+    .channels { display: flex; flex-direction: column; gap: 24px; }
+
+    .channel-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .channel-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .channel-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--cyan);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .channel-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    .channel-info { flex: 1; min-width: 0; }
+
+    .channel-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .channel-handle {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .channel-badge {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: var(--surface2);
+      color: var(--cyan);
+      border: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .channel-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .ch-stat {
+      background: var(--surface);
+      padding: 16px 20px;
+    }
+
+    .ch-stat .label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 4px;
+    }
+
+    .ch-stat .val {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .ch-stat .val.cyan { color: var(--cyan); }
+    .ch-stat .val.green { color: var(--green); }
+    .ch-stat .val.purple { color: var(--purple); }
+
+    /* Videos table */
+    .videos-section { padding: 0 24px 24px; }
+
+    .videos-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--muted);
+      padding: 16px 0 12px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0;
+    }
+
+    .video-row {
+      display: grid;
+      grid-template-columns: 1fr 90px 90px 90px 90px;
+      gap: 8px;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .video-row:last-child { border-bottom: none; }
+
+    .video-title-cell {
+      font-size: 13px;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-right: 8px;
+    }
+
+    .video-title-cell a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .video-title-cell a:hover { color: var(--cyan); }
+
+    .video-date {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .num {
+      font-size: 13px;
+      font-weight: 600;
+      text-align: right;
+      color: var(--text);
+    }
+
+    .num.hi { color: var(--green); }
+
+    .col-header {
+      font-size: 11px;
+      color: var(--muted);
+      text-align: right;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .video-row.header { padding: 12px 0 8px; }
+
+    /* Empty state */
+    .empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+
+    .empty h2 { font-size: 16px; color: var(--text); margin-bottom: 8px; }
+
+    .empty code {
+      background: var(--surface2);
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-size: 13px;
+      display: inline-block;
+      margin-top: 12px;
+      color: var(--cyan);
+    }
+
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--muted);
+    }
+
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--border);
+      border-top-color: var(--cyan);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 12px;
+      border-top: 1px solid var(--border);
+      margin-top: 48px;
+    }
+
+    footer a { color: var(--cyan); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" fill="#ff0000" opacity="0.85"/>
+      <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="white"/>
+    </svg>
+    YouTube Dashboard
+  </div>
+  <div class="meta">
+    Última actualización: <span id="last-updated">—</span>
+    &nbsp;·&nbsp;
+    Powered by <a href="https://chainsofbrains.com" style="color:var(--cyan);text-decoration:none;">Chains of Brains</a>
+  </div>
+</header>
+
+<main>
+  <div id="app">
+    <div class="loading">
+      <div class="spinner"></div>
+      Cargando datos...
+    </div>
+  </div>
+</main>
+
+<footer>
+  Dashboard generado por Orso · <a href="https://chainsofbrains.com">Chains of Brains</a>
+</footer>
+
+<script>
+function fmt(n) {
+  if (n === null || n === undefined) return '—';
+  n = Number(n);
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
+  if (n >= 1_000) return (n / 1_000).toFixed(1) + 'K';
+  return n.toLocaleString();
+}
+
+function fmtDate(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function initials(name) {
+  return name.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+}
+
+async function load() {
+  const resp = await fetch('data.json?t=' + Date.now());
+  const data = await resp.json();
+  render(data);
+}
+
+function render(data) {
+  document.getElementById('last-updated').textContent = data.last_updated || 'Never';
+
+  const channels = data.channels || [];
+  const app = document.getElementById('app');
+
+  if (!channels.length) {
+    app.innerHTML = `
+      <div class="empty">
+        <h2>Sin datos todavía</h2>
+        <p>Ejecutá el script de refresh para cargar los canales.</p>
+        <code>python3 ~/clipflow/yt-dashboard/refresh_data.py</code>
+      </div>`;
+    return;
+  }
+
+  // Totals
+  const totalSubs = channels.reduce((s, c) => s + (c.subscribers || 0), 0);
+  const totalViews = channels.reduce((s, c) => s + (c.total_views || 0), 0);
+  const total28d = channels.reduce((s, c) => s + (c.views_28d || 0), 0);
+  const totalVideos = channels.reduce((s, c) => s + (c.video_count || 0), 0);
+
+  let html = `
+    <div class="summary">
+      <div class="stat-card">
+        <div class="label">Canales activos</div>
+        <div class="value">${channels.length}</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Suscriptores totales</div>
+        <div class="value">${fmt(totalSubs)}</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Views totales</div>
+        <div class="value">${fmt(totalViews)}</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Views últimos 28d</div>
+        <div class="value">${fmt(total28d)}</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Videos publicados</div>
+        <div class="value">${fmt(totalVideos)}</div>
+      </div>
+    </div>
+    <div class="channels">`;
+
+  for (const ch of channels) {
+    const av = ch.thumbnail
+      ? `<img src="${ch.thumbnail}" alt="">`
+      : initials(ch.title || '?');
+
+    const videos = (ch.recent_videos || []).slice(0, 8);
+
+    let videoRows = '';
+    if (videos.length) {
+      videoRows = `
+        <div class="video-row header">
+          <div class="col-header" style="text-align:left">Video</div>
+          <div class="col-header">Views</div>
+          <div class="col-header">Likes</div>
+          <div class="col-header">Comentarios</div>
+          <div class="col-header">Duración</div>
+        </div>` +
+        videos.map(v => `
+          <div class="video-row">
+            <div class="video-title-cell">
+              <a href="https://youtube.com/watch?v=${v.id}" target="_blank">${v.title || '—'}</a>
+              <div class="video-date">${fmtDate(v.published_at)}</div>
+            </div>
+            <div class="num ${(v.views || 0) > 10000 ? 'hi' : ''}">${fmt(v.views)}</div>
+            <div class="num">${fmt(v.likes)}</div>
+            <div class="num">${fmt(v.comments)}</div>
+            <div class="num">${v.duration || '—'}</div>
+          </div>`).join('');
+    } else {
+      videoRows = '<div style="padding:16px 0;color:var(--muted);font-size:13px;">Sin videos recientes.</div>';
+    }
+
+    html += `
+      <div class="channel-card">
+        <div class="channel-header">
+          <div class="channel-avatar">${av}</div>
+          <div class="channel-info">
+            <div class="channel-name">${ch.title || '—'}</div>
+            <div class="channel-handle">${ch.handle || ch.id || ''}</div>
+          </div>
+          <div class="channel-badge">${ch.id || ''}</div>
+        </div>
+        <div class="channel-stats">
+          <div class="ch-stat">
+            <div class="label">Suscriptores</div>
+            <div class="val cyan">${fmt(ch.subscribers)}</div>
+          </div>
+          <div class="ch-stat">
+            <div class="label">Views totales</div>
+            <div class="val">${fmt(ch.total_views)}</div>
+          </div>
+          <div class="ch-stat">
+            <div class="label">Views 28d</div>
+            <div class="val green">${fmt(ch.views_28d)}</div>
+          </div>
+          <div class="ch-stat">
+            <div class="label">Watch time 28d</div>
+            <div class="val">${fmt(ch.minutes_28d)} min</div>
+          </div>
+          <div class="ch-stat">
+            <div class="label">Subs ganados 28d</div>
+            <div class="val purple">${fmt(ch.subs_gained_28d)}</div>
+          </div>
+          <div class="ch-stat">
+            <div class="label">Videos</div>
+            <div class="val">${fmt(ch.video_count)}</div>
+          </div>
+        </div>
+        <div class="videos-section">
+          <div class="videos-title">Últimos uploads</div>
+          ${videoRows}
+        </div>
+      </div>`;
+  }
+
+  html += '</div>';
+  app.innerHTML = html;
+}
+
+load().catch(err => {
+  document.getElementById('app').innerHTML = `
+    <div class="empty">
+      <h2>Error cargando datos</h2>
+      <p>${err.message}</p>
+    </div>`;
+});
+</script>
+</body>
+</html>
