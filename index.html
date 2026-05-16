@@ -1,497 +1,547 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YouTube Dashboard — Chains of Brains</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>YT Trading Desk — Chains of Brains</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-    :root {
-      --bg: #0d0f14;
-      --surface: #161b24;
-      --surface2: #1e2635;
-      --border: #2a3347;
-      --text: #e8ecf4;
-      --muted: #6b7a99;
-      --cyan: #00d4ff;
-      --green: #00e676;
-      --red: #ff4757;
-      --purple: #7c5cfc;
-      --gold: #ffd32a;
-    }
+:root{
+  --bg:#070b12;
+  --panel:#0d1321;
+  --panel2:#111827;
+  --border:#1c2a3e;
+  --border2:#243044;
+  --text:#d1dae8;
+  --muted:#4a5a72;
+  --dim:#2a3a54;
+  --green:#00e676;
+  --green-dim:#00e67622;
+  --red:#ff3d57;
+  --red-dim:#ff3d5722;
+  --cyan:#00bfff;
+  --cyan-dim:#00bfff18;
+  --gold:#f0b429;
+  --purple:#a78bfa;
+  --mono:'SF Mono','Fira Code','Consolas','Courier New',monospace;
+}
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      font-size: 14px;
-      line-height: 1.5;
-      min-height: 100vh;
-    }
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-size:13px;
+  line-height:1.4;
+  min-height:100vh;
+  overflow-x:hidden;
+}
 
-    header {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 18px 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
+/* ── TICKER BAR ── */
+.ticker-bar{
+  background:#080d18;
+  border-bottom:1px solid var(--border);
+  height:32px;
+  display:flex;
+  align-items:center;
+  overflow:hidden;
+  position:relative;
+}
+.ticker-bar::before,.ticker-bar::after{
+  content:'';position:absolute;top:0;width:60px;height:100%;z-index:2;
+}
+.ticker-bar::before{left:0;background:linear-gradient(90deg,#080d18,transparent)}
+.ticker-bar::after{right:0;background:linear-gradient(-90deg,#080d18,transparent)}
+.ticker-track{
+  display:flex;gap:40px;
+  animation:ticker 30s linear infinite;
+  white-space:nowrap;padding:0 20px;
+}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{
+  font-family:var(--mono);font-size:11px;display:flex;align-items:center;gap:8px;
+}
+.ticker-label{color:var(--muted)}
+.ticker-val{color:var(--text);font-weight:600}
+.ticker-chg{font-size:10px;padding:1px 5px;border-radius:3px}
+.up{color:var(--green)}.down{color:var(--red)}.flat{color:var(--muted)}
+.up-bg{background:var(--green-dim);color:var(--green)}
+.down-bg{background:var(--red-dim);color:var(--red)}
 
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--cyan);
-      letter-spacing: -0.3px;
-    }
+/* ── HEADER ── */
+header{
+  background:var(--panel);
+  border-bottom:1px solid var(--border);
+  padding:0 24px;
+  height:52px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;letter-spacing:-.3px}
+.logo-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 8px var(--green);
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.logo-text{color:var(--text)}
+.logo-sub{color:var(--muted);font-size:11px;font-weight:400;margin-left:4px}
+.header-right{display:flex;align-items:center;gap:20px}
+.clock{font-family:var(--mono);font-size:12px;color:var(--cyan)}
+.update-badge{
+  font-size:11px;color:var(--muted);
+  background:var(--panel2);border:1px solid var(--border);
+  padding:4px 10px;border-radius:4px;
+}
+.update-badge span{color:var(--text)}
 
-    .logo svg { opacity: 0.9; }
+/* ── LAYOUT ── */
+main{padding:20px 24px;max-width:1600px;margin:0 auto}
 
-    .meta {
-      font-size: 12px;
-      color: var(--muted);
-    }
+/* ── PORTFOLIO BAR ── */
+.portfolio-bar{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:1px;background:var(--border);
+  border:1px solid var(--border);border-radius:8px;
+  overflow:hidden;margin-bottom:20px;
+}
+.p-stat{
+  background:var(--panel);padding:14px 18px;
+}
+.p-stat .p-label{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px}
+.p-stat .p-val{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--cyan);line-height:1}
+.p-stat .p-change{font-size:11px;margin-top:4px}
 
-    .meta span { color: var(--text); font-weight: 500; }
+/* ── CHANNEL BLOCK ── */
+.channel-block{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:10px;overflow:hidden;margin-bottom:20px;
+}
 
-    main { padding: 32px; max-width: 1400px; margin: 0 auto; }
+.ch-header{
+  display:flex;align-items:center;gap:14px;
+  padding:16px 20px;border-bottom:1px solid var(--border);
+  background:var(--panel2);
+}
+.ch-avatar{
+  width:40px;height:40px;border-radius:50%;
+  background:var(--dim);display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:16px;color:var(--cyan);overflow:hidden;flex-shrink:0;
+}
+.ch-avatar img{width:100%;height:100%;object-fit:cover}
+.ch-name{font-size:15px;font-weight:700;color:var(--text)}
+.ch-handle{font-size:11px;color:var(--muted);font-family:var(--mono)}
+.ch-id{
+  margin-left:auto;font-size:10px;font-family:var(--mono);
+  color:var(--muted);background:var(--dim);
+  padding:3px 8px;border-radius:3px;
+}
 
-    /* Summary bar */
-    .summary {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 16px;
-      margin-bottom: 32px;
-    }
+/* ── METRICS ROW ── */
+.metrics-row{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+  gap:1px;background:var(--border);border-bottom:1px solid var(--border);
+}
+.metric{background:var(--panel);padding:16px 18px}
+.metric .m-label{
+  font-size:10px;text-transform:uppercase;letter-spacing:.7px;
+  color:var(--muted);margin-bottom:8px;
+}
+.metric .m-val{
+  font-family:var(--mono);font-size:26px;font-weight:700;line-height:1;
+  color:var(--text);
+}
+.metric .m-val.g{color:var(--green)}
+.metric .m-val.c{color:var(--cyan)}
+.metric .m-val.p{color:var(--purple)}
+.metric .m-change{
+  font-size:11px;font-family:var(--mono);margin-top:6px;
+  display:inline-flex;align-items:center;gap:3px;
+  padding:2px 7px;border-radius:3px;
+}
 
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 20px;
-    }
+/* ── CHARTS GRID ── */
+.charts-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:1px;background:var(--border);border-bottom:1px solid var(--border);
+}
+.chart-panel{background:var(--panel);padding:16px 20px}
+.chart-label{
+  font-size:10px;text-transform:uppercase;letter-spacing:.8px;
+  color:var(--muted);margin-bottom:12px;display:flex;
+  align-items:center;justify-content:space-between;
+}
+.chart-label span{font-family:var(--mono);color:var(--text);font-size:13px;text-transform:none;letter-spacing:0}
+.chart-wrap{height:110px;position:relative}
 
-    .stat-card .label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
+/* ── VIDEO PILLS ── */
+.videos-row{
+  padding:16px 20px;display:flex;flex-wrap:wrap;gap:10px;
+}
+.vid-pill{
+  background:var(--panel2);border:1px solid var(--border2);
+  border-radius:6px;padding:10px 14px;
+  display:flex;flex-direction:column;gap:5px;
+  min-width:200px;flex:1;max-width:260px;
+  cursor:pointer;transition:border-color .15s;
+  text-decoration:none;color:inherit;
+}
+.vid-pill:hover{border-color:var(--cyan)}
+.vid-thumb{
+  width:100%;aspect-ratio:16/9;border-radius:4px;
+  background:var(--dim);object-fit:cover;margin-bottom:6px;
+}
+.vid-title{
+  font-size:12px;color:var(--text);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  overflow:hidden;line-height:1.4;
+}
+.vid-meta{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+.vid-views{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--cyan)}
+.vid-likes{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.vid-date{font-size:10px;color:var(--muted)}
 
-    .stat-card .value {
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--cyan);
-      line-height: 1;
-    }
+/* ── EMPTY / LOADING ── */
+.loading-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:80px 20px;gap:16px;color:var(--muted);
+}
+.ring{
+  width:36px;height:36px;border-radius:50%;
+  border:3px solid var(--dim);border-top-color:var(--cyan);
+  animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.no-data{
+  text-align:center;padding:48px 20px;color:var(--muted);font-size:13px;
+}
+.no-data code{
+  display:inline-block;margin-top:12px;padding:8px 16px;
+  background:var(--panel2);border:1px solid var(--border);border-radius:5px;
+  font-family:var(--mono);font-size:12px;color:var(--cyan);
+}
 
-    .stat-card .sub {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 4px;
-    }
+footer{
+  text-align:center;padding:24px;color:var(--muted);font-size:11px;
+  border-top:1px solid var(--border);margin-top:8px;
+}
+footer a{color:var(--cyan);text-decoration:none}
 
-    /* Channel cards */
-    .channels { display: flex; flex-direction: column; gap: 24px; }
-
-    .channel-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    .channel-header {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .channel-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: var(--surface2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--cyan);
-      flex-shrink: 0;
-      overflow: hidden;
-    }
-
-    .channel-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-    .channel-info { flex: 1; min-width: 0; }
-
-    .channel-name {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .channel-handle {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .channel-badge {
-      font-size: 11px;
-      padding: 3px 10px;
-      border-radius: 20px;
-      background: var(--surface2);
-      color: var(--cyan);
-      border: 1px solid var(--border);
-      white-space: nowrap;
-    }
-
-    .channel-stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 1px;
-      background: var(--border);
-    }
-
-    .ch-stat {
-      background: var(--surface);
-      padding: 16px 20px;
-    }
-
-    .ch-stat .label {
-      font-size: 11px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      margin-bottom: 4px;
-    }
-
-    .ch-stat .val {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    .ch-stat .val.cyan { color: var(--cyan); }
-    .ch-stat .val.green { color: var(--green); }
-    .ch-stat .val.purple { color: var(--purple); }
-
-    /* Videos table */
-    .videos-section { padding: 0 24px 24px; }
-
-    .videos-title {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--muted);
-      padding: 16px 0 12px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 0;
-    }
-
-    .video-row {
-      display: grid;
-      grid-template-columns: 1fr 90px 90px 90px 90px;
-      gap: 8px;
-      align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .video-row:last-child { border-bottom: none; }
-
-    .video-title-cell {
-      font-size: 13px;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      padding-right: 8px;
-    }
-
-    .video-title-cell a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .video-title-cell a:hover { color: var(--cyan); }
-
-    .video-date {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    .num {
-      font-size: 13px;
-      font-weight: 600;
-      text-align: right;
-      color: var(--text);
-    }
-
-    .num.hi { color: var(--green); }
-
-    .col-header {
-      font-size: 11px;
-      color: var(--muted);
-      text-align: right;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .video-row.header { padding: 12px 0 8px; }
-
-    /* Empty state */
-    .empty {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--muted);
-    }
-
-    .empty h2 { font-size: 16px; color: var(--text); margin-bottom: 8px; }
-
-    .empty code {
-      background: var(--surface2);
-      padding: 10px 18px;
-      border-radius: 6px;
-      font-size: 13px;
-      display: inline-block;
-      margin-top: 12px;
-      color: var(--cyan);
-    }
-
-    /* Loading */
-    .loading {
-      text-align: center;
-      padding: 80px 20px;
-      color: var(--muted);
-    }
-
-    .spinner {
-      width: 32px;
-      height: 32px;
-      border: 3px solid var(--border);
-      border-top-color: var(--cyan);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 16px;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    footer {
-      text-align: center;
-      padding: 24px;
-      color: var(--muted);
-      font-size: 12px;
-      border-top: 1px solid var(--border);
-      margin-top: 48px;
-    }
-
-    footer a { color: var(--cyan); text-decoration: none; }
-  </style>
+@media(max-width:640px){
+  .charts-grid{grid-template-columns:1fr}
+  .videos-row{flex-direction:column}
+  .vid-pill{max-width:100%}
+}
+</style>
 </head>
 <body>
 
+<!-- TICKER -->
+<div class="ticker-bar">
+  <div class="ticker-track" id="ticker-track">
+    <div class="ticker-item"><span class="ticker-label">loading</span></div>
+  </div>
+</div>
+
+<!-- HEADER -->
 <header>
   <div class="logo">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-      <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" fill="#ff0000" opacity="0.85"/>
-      <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="white"/>
-    </svg>
-    YouTube Dashboard
+    <div class="logo-dot"></div>
+    <span class="logo-text">YT Trading Desk</span>
+    <span class="logo-sub">/ Chains of Brains</span>
   </div>
-  <div class="meta">
-    Última actualización: <span id="last-updated">—</span>
-    &nbsp;·&nbsp;
-    Powered by <a href="https://chainsofbrains.com" style="color:var(--cyan);text-decoration:none;">Chains of Brains</a>
+  <div class="header-right">
+    <div class="clock" id="clock">--:--:--</div>
+    <div class="update-badge">Updated <span id="last-updated">—</span></div>
   </div>
 </header>
 
-<main>
-  <div id="app">
-    <div class="loading">
-      <div class="spinner"></div>
-      Cargando datos...
-    </div>
+<main id="main">
+  <div class="loading-wrap">
+    <div class="ring"></div>
+    <span>Connecting to data feed...</span>
   </div>
 </main>
 
 <footer>
-  Dashboard generado por Orso · <a href="https://chainsofbrains.com">Chains of Brains</a>
+  Powered by <a href="https://chainsofbrains.com">Chains of Brains</a>
+  &nbsp;·&nbsp; Refresh: <code style="background:var(--panel2);padding:2px 8px;border-radius:3px;font-family:var(--mono);font-size:11px;color:var(--cyan)">python3 ~/clipflow/yt-dashboard/refresh_data.py</code>
 </footer>
 
 <script>
-function fmt(n) {
-  if (n === null || n === undefined) return '—';
-  n = Number(n);
-  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
-  if (n >= 1_000) return (n / 1_000).toFixed(1) + 'K';
+/* ── Utilities ── */
+const fmt = n => {
+  n = Number(n||0);
+  if(n>=1e6) return (n/1e6).toFixed(2)+'M';
+  if(n>=1e3) return (n/1e3).toFixed(1)+'K';
   return n.toLocaleString();
+};
+const pctHtml = (v, invert=false) => {
+  if(v===null||v===undefined) return '<span class="flat">—</span>';
+  const up = invert ? v<0 : v>=0;
+  const cls = up ? 'up-bg' : 'down-bg';
+  const arrow = up ? '▲' : '▼';
+  return `<span class="m-change ${cls}">${arrow} ${Math.abs(v)}%</span>`;
+};
+const chgHtml = (v) => {
+  if(v===null||v===undefined) return '<span class="flat">—</span>';
+  const up = v>=0;
+  return `<span class="${up?'up':'down'}">${up?'+':''}${v}%</span>`;
+};
+
+/* ── Clock ── */
+function startClock(){
+  const el = document.getElementById('clock');
+  const tick = () => {
+    el.textContent = new Date().toLocaleTimeString('en-US',{hour12:false});
+  };
+  tick(); setInterval(tick,1000);
 }
 
-function fmtDate(iso) {
-  if (!iso) return '—';
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+/* ── Chart factory ── */
+function makeChart(id, labels, data, color){
+  const ctx = document.getElementById(id);
+  if(!ctx) return;
+  const max = Math.max(...data,1);
+  const hasData = data.some(v=>v>0);
+  const gradient = ctx.getContext('2d').createLinearGradient(0,0,0,110);
+  gradient.addColorStop(0, color+'44');
+  gradient.addColorStop(1, color+'00');
+
+  new Chart(ctx,{
+    type:'line',
+    data:{
+      labels,
+      datasets:[{
+        data,
+        borderColor: hasData ? color : '#2a3a54',
+        borderWidth:2,
+        pointRadius:0,
+        pointHoverRadius:4,
+        fill:true,
+        backgroundColor: hasData ? gradient : 'transparent',
+        tension:.4,
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      animation:{duration:600},
+      plugins:{legend:{display:false},tooltip:{
+        mode:'index',intersect:false,
+        backgroundColor:'#0d1321',
+        borderColor:'#1c2a3e',borderWidth:1,
+        titleColor:'#4a5a72',bodyColor:'#d1dae8',
+        callbacks:{label:ctx=>' '+fmt(ctx.raw)}
+      }},
+      scales:{
+        x:{display:false},
+        y:{
+          display:false,min:0,
+          suggestedMax: max===0 ? 10 : max*1.15,
+        }
+      }
+    }
+  });
 }
 
-function initials(name) {
-  return name.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+/* ── Ticker builder ── */
+function buildTicker(channels){
+  const items = [];
+  channels.forEach(ch=>{
+    const vp = ch.views_pct;
+    const chgClass = vp===null?'flat':vp>=0?'up':'down';
+    const chgStr  = vp===null?'—':(vp>=0?'+':'')+vp+'%';
+    items.push(`
+      <div class="ticker-item">
+        <span class="ticker-label">${ch.title}</span>
+        <span class="ticker-val">${fmt(ch.total_views)} views</span>
+        <span class="ticker-chg ${chgClass}">${chgStr} 28d</span>
+      </div>
+      <div class="ticker-item">
+        <span class="ticker-label">SUBS</span>
+        <span class="ticker-val">${fmt(ch.subscribers)}</span>
+      </div>`);
+  });
+  // duplicate for infinite scroll
+  const full = items.join('')+items.join('');
+  const track = document.getElementById('ticker-track');
+  track.innerHTML = full;
 }
 
-async function load() {
-  const resp = await fetch('data.json?t=' + Date.now());
-  const data = await resp.json();
-  render(data);
+/* ── Portfolio bar ── */
+function buildPortfolio(channels){
+  const totalSubs  = channels.reduce((s,c)=>s+(c.subscribers||0),0);
+  const totalViews = channels.reduce((s,c)=>s+(c.total_views||0),0);
+  const total28d   = channels.reduce((s,c)=>s+(c.views_28d||0),0);
+  const totalSubs28d = channels.reduce((s,c)=>s+(c.subs_gained_28d||0),0);
+  const totalVideos = channels.reduce((s,c)=>s+(c.video_count||0),0);
+  return `
+  <div class="portfolio-bar">
+    <div class="p-stat">
+      <div class="p-label">Channels</div>
+      <div class="p-val">${channels.length}</div>
+    </div>
+    <div class="p-stat">
+      <div class="p-label">Total Subscribers</div>
+      <div class="p-val">${fmt(totalSubs)}</div>
+    </div>
+    <div class="p-stat">
+      <div class="p-label">Total Views</div>
+      <div class="p-val">${fmt(totalViews)}</div>
+    </div>
+    <div class="p-stat">
+      <div class="p-label">Views · 28d</div>
+      <div class="p-val" style="color:var(--green)">${fmt(total28d)}</div>
+    </div>
+    <div class="p-stat">
+      <div class="p-label">New Subs · 28d</div>
+      <div class="p-val" style="color:var(--purple)">${fmt(totalSubs28d)}</div>
+    </div>
+    <div class="p-stat">
+      <div class="p-label">Videos</div>
+      <div class="p-val">${fmt(totalVideos)}</div>
+    </div>
+  </div>`;
 }
 
-function render(data) {
-  document.getElementById('last-updated').textContent = data.last_updated || 'Never';
+/* ── Channel block ── */
+function buildChannel(ch, idx){
+  const av = ch.thumbnail
+    ? `<img src="${ch.thumbnail}" alt="">`
+    : (ch.title||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
 
-  const channels = data.channels || [];
-  const app = document.getElementById('app');
+  const viewsColor = (ch.views_28d||0) > 0 ? 'var(--green)' : 'var(--cyan)';
 
-  if (!channels.length) {
-    app.innerHTML = `
-      <div class="empty">
-        <h2>Sin datos todavía</h2>
-        <p>Ejecutá el script de refresh para cargar los canales.</p>
-        <code>python3 ~/clipflow/yt-dashboard/refresh_data.py</code>
-      </div>`;
-    return;
-  }
+  // Video pills
+  const pills = (ch.recent_videos||[]).slice(0,6).map(v=>{
+    const thumb = v.thumbnail
+      ? `<img class="vid-thumb" src="${v.thumbnail}" alt="">`
+      : `<div class="vid-thumb" style="display:flex;align-items:center;justify-content:center;color:var(--muted)">▶</div>`;
+    return `
+    <a class="vid-pill" href="https://youtube.com/watch?v=${v.id}" target="_blank" rel="noopener">
+      ${thumb}
+      <div class="vid-title">${v.title||'—'}</div>
+      <div class="vid-meta">
+        <span class="vid-views">▶ ${fmt(v.views)}</span>
+        <span class="vid-likes">♥ ${fmt(v.likes)}</span>
+      </div>
+      <div class="vid-date">${v.published_at||''}</div>
+    </a>`;
+  }).join('');
 
-  // Totals
-  const totalSubs = channels.reduce((s, c) => s + (c.subscribers || 0), 0);
-  const totalViews = channels.reduce((s, c) => s + (c.total_views || 0), 0);
-  const total28d = channels.reduce((s, c) => s + (c.views_28d || 0), 0);
-  const totalVideos = channels.reduce((s, c) => s + (c.video_count || 0), 0);
+  return `
+  <div class="channel-block">
+    <div class="ch-header">
+      <div class="ch-avatar">${av}</div>
+      <div>
+        <div class="ch-name">${ch.title||'—'}</div>
+        <div class="ch-handle">${ch.handle||''}</div>
+      </div>
+      <div class="ch-id">${ch.id||''}</div>
+    </div>
 
-  let html = `
-    <div class="summary">
-      <div class="stat-card">
-        <div class="label">Canales activos</div>
-        <div class="value">${channels.length}</div>
+    <div class="metrics-row">
+      <div class="metric">
+        <div class="m-label">Subscribers</div>
+        <div class="m-val c">${fmt(ch.subscribers)}</div>
+        ${pctHtml(ch.subs_pct)}
       </div>
-      <div class="stat-card">
-        <div class="label">Suscriptores totales</div>
-        <div class="value">${fmt(totalSubs)}</div>
+      <div class="metric">
+        <div class="m-label">Total Views</div>
+        <div class="m-val">${fmt(ch.total_views)}</div>
       </div>
-      <div class="stat-card">
-        <div class="label">Views totales</div>
-        <div class="value">${fmt(totalViews)}</div>
+      <div class="metric">
+        <div class="m-label">Views · 28d</div>
+        <div class="m-val g">${fmt(ch.views_28d)}</div>
+        ${pctHtml(ch.views_pct)}
       </div>
-      <div class="stat-card">
-        <div class="label">Views últimos 28d</div>
-        <div class="value">${fmt(total28d)}</div>
+      <div class="metric">
+        <div class="m-label">Watch Time · 28d</div>
+        <div class="m-val">${fmt(ch.minutes_28d)}<span style="font-size:13px;color:var(--muted)"> min</span></div>
       </div>
-      <div class="stat-card">
-        <div class="label">Videos publicados</div>
-        <div class="value">${fmt(totalVideos)}</div>
+      <div class="metric">
+        <div class="m-label">New Subs · 28d</div>
+        <div class="m-val p">${fmt(ch.subs_gained_28d)}</div>
+      </div>
+      <div class="metric">
+        <div class="m-label">Videos</div>
+        <div class="m-val">${fmt(ch.video_count)}</div>
       </div>
     </div>
-    <div class="channels">`;
 
-  for (const ch of channels) {
-    const av = ch.thumbnail
-      ? `<img src="${ch.thumbnail}" alt="">`
-      : initials(ch.title || '?');
-
-    const videos = (ch.recent_videos || []).slice(0, 8);
-
-    let videoRows = '';
-    if (videos.length) {
-      videoRows = `
-        <div class="video-row header">
-          <div class="col-header" style="text-align:left">Video</div>
-          <div class="col-header">Views</div>
-          <div class="col-header">Likes</div>
-          <div class="col-header">Comentarios</div>
-          <div class="col-header">Duración</div>
-        </div>` +
-        videos.map(v => `
-          <div class="video-row">
-            <div class="video-title-cell">
-              <a href="https://youtube.com/watch?v=${v.id}" target="_blank">${v.title || '—'}</a>
-              <div class="video-date">${fmtDate(v.published_at)}</div>
-            </div>
-            <div class="num ${(v.views || 0) > 10000 ? 'hi' : ''}">${fmt(v.views)}</div>
-            <div class="num">${fmt(v.likes)}</div>
-            <div class="num">${fmt(v.comments)}</div>
-            <div class="num">${v.duration || '—'}</div>
-          </div>`).join('');
-    } else {
-      videoRows = '<div style="padding:16px 0;color:var(--muted);font-size:13px;">Sin videos recientes.</div>';
-    }
-
-    html += `
-      <div class="channel-card">
-        <div class="channel-header">
-          <div class="channel-avatar">${av}</div>
-          <div class="channel-info">
-            <div class="channel-name">${ch.title || '—'}</div>
-            <div class="channel-handle">${ch.handle || ch.id || ''}</div>
-          </div>
-          <div class="channel-badge">${ch.id || ''}</div>
+    <div class="charts-grid">
+      <div class="chart-panel">
+        <div class="chart-label">
+          Daily Views · 30d
+          <span>${fmt(ch.views_28d)} total</span>
         </div>
-        <div class="channel-stats">
-          <div class="ch-stat">
-            <div class="label">Suscriptores</div>
-            <div class="val cyan">${fmt(ch.subscribers)}</div>
-          </div>
-          <div class="ch-stat">
-            <div class="label">Views totales</div>
-            <div class="val">${fmt(ch.total_views)}</div>
-          </div>
-          <div class="ch-stat">
-            <div class="label">Views 28d</div>
-            <div class="val green">${fmt(ch.views_28d)}</div>
-          </div>
-          <div class="ch-stat">
-            <div class="label">Watch time 28d</div>
-            <div class="val">${fmt(ch.minutes_28d)} min</div>
-          </div>
-          <div class="ch-stat">
-            <div class="label">Subs ganados 28d</div>
-            <div class="val purple">${fmt(ch.subs_gained_28d)}</div>
-          </div>
-          <div class="ch-stat">
-            <div class="label">Videos</div>
-            <div class="val">${fmt(ch.video_count)}</div>
-          </div>
+        <div class="chart-wrap">
+          <canvas id="chart-views-${idx}"></canvas>
         </div>
-        <div class="videos-section">
-          <div class="videos-title">Últimos uploads</div>
-          ${videoRows}
+      </div>
+      <div class="chart-panel">
+        <div class="chart-label">
+          Daily New Subs · 30d
+          <span>${fmt(ch.subs_gained_28d)} gained</span>
         </div>
-      </div>`;
-  }
+        <div class="chart-wrap">
+          <canvas id="chart-subs-${idx}"></canvas>
+        </div>
+      </div>
+    </div>
 
-  html += '</div>';
-  app.innerHTML = html;
+    ${pills ? `<div class="videos-row">${pills}</div>` : ''}
+  </div>`;
 }
 
-load().catch(err => {
-  document.getElementById('app').innerHTML = `
-    <div class="empty">
-      <h2>Error cargando datos</h2>
-      <p>${err.message}</p>
-    </div>`;
-});
+/* ── Main render ── */
+async function init(){
+  startClock();
+  try{
+    const resp = await fetch('data.json?t='+Date.now());
+    const data = await resp.json();
+
+    document.getElementById('last-updated').textContent = data.last_updated||'—';
+
+    const channels = data.channels||[];
+    const main = document.getElementById('main');
+
+    if(!channels.length){
+      main.innerHTML = `
+        <div class="no-data">
+          No data yet.<br>
+          <code>python3 ~/clipflow/yt-dashboard/refresh_data.py</code>
+        </div>`;
+      return;
+    }
+
+    buildTicker(channels);
+
+    let html = buildPortfolio(channels);
+    channels.forEach((ch,i)=>{ html += buildChannel(ch,i); });
+    main.innerHTML = html;
+
+    // Render charts after DOM is ready
+    channels.forEach((ch,i)=>{
+      const labels = ch.labels||[];
+      const views  = ch.views_series||[];
+      const subs   = ch.subs_series||[];
+      const hasViews = views.some(v=>v>0);
+      makeChart(`chart-views-${i}`, labels, views, hasViews ? '#00e676' : '#2a3a54');
+      makeChart(`chart-subs-${i}`,  labels, subs,  '#a78bfa');
+    });
+
+  }catch(e){
+    document.getElementById('main').innerHTML = `
+      <div class="no-data">Error: ${e.message}</div>`;
+  }
+}
+
+init();
 </script>
 </body>
 </html>
