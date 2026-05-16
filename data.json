@@ -1,4 +1,91 @@
 {
-  "last_updated": "Never",
-  "channels": []
+  "last_updated": "2026-05-16 13:24 UTC",
+  "channels": [
+    {
+      "id": "UC81qTIHVYqKtpFnFxVtqqpg",
+      "title": "DUKE IBZ",
+      "handle": "@dukeibz70",
+      "thumbnail": "https://yt3.ggpht.com/Ip8PYXteNigdpAlF_QAnQacLKBru2dcJTeRp3qOkzGxUcjzBOt5PEw1-R8ndEKMYVpZhjnT7ww=s88-c-k-c0x00ffffff-no-rj",
+      "subscribers": 4,
+      "total_views": 98,
+      "video_count": 13,
+      "views_28d": 0,
+      "minutes_28d": 0,
+      "subs_gained_28d": 0,
+      "recent_videos": [
+        {
+          "id": "W6paVaeSRp4",
+          "title": "**Your comfort today is costing you decades of regret**",
+          "published_at": "2026-05-15T17:36:15Z",
+          "views": 8,
+          "likes": 0,
+          "comments": 0,
+          "duration": "0:13"
+        },
+        {
+          "id": "k_U-B3be6Vg",
+          "title": "**These 4 words are destroying your success without you knowing**",
+          "published_at": "2026-05-15T17:35:09Z",
+          "views": 1320,
+          "likes": 20,
+          "comments": 0,
+          "duration": "0:22"
+        },
+        {
+          "id": "OLGh0pPaAE0",
+          "title": "**These 4 words are silently destroying your success**",
+          "published_at": "2026-05-15T17:35:15Z",
+          "views": 998,
+          "likes": 12,
+          "comments": 1,
+          "duration": "0:10"
+        },
+        {
+          "id": "aLsXDfP_G0c",
+          "title": "**History repeats itself in ways you won't see coming**",
+          "published_at": "2026-05-15T17:35:03Z",
+          "views": 372,
+          "likes": 4,
+          "comments": 0,
+          "duration": "0:35"
+        },
+        {
+          "id": "rZeSKBhs1BA",
+          "title": "**Your biggest win is setting you up for your biggest loss.**",
+          "published_at": "2026-05-15T17:36:20Z",
+          "views": 3,
+          "likes": 0,
+          "comments": 0,
+          "duration": "0:17"
+        },
+        {
+          "id": "B-nE6pXMqvI",
+          "title": "**These 4 words are silently destroying your success**",
+          "published_at": "2026-05-15T17:35:21Z",
+          "views": 1283,
+          "likes": 6,
+          "comments": 0,
+          "duration": "0:22"
+        },
+        {
+          "id": "-6ccwsUyZFo",
+          "title": "**History repeats itself—and most people miss it completely**",
+          "published_at": "2026-05-15T17:34:53Z",
+          "views": 172,
+          "likes": 0,
+          "comments": 0,
+          "duration": "0:45"
+        },
+        {
+          "id": "fngnFXq9mIo",
+          "title": "**A CIA Physicist Just Revealed the Government Has Proof of Aliens**",
+          "published_at": "2026-05-15T17:34:45Z",
+          "views": 2,
+          "likes": 0,
+          "comments": 0,
+          "duration": "0:24"
+        }
+      ]
+    }
+  ]
 }
