@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-05-16 15:00 UTC",
+  "last_updated": "2026-05-17 13:00 UTC",
   "channels": [
     {
       "id": "UC81qTIHVYqKtpFnFxVtqqpg",
@@ -7,15 +7,14 @@
       "handle": "@dukeibz70",
       "thumbnail": "https://yt3.ggpht.com/Ip8PYXteNigdpAlF_QAnQacLKBru2dcJTeRp3qOkzGxUcjzBOt5PEw1-R8ndEKMYVpZhjnT7ww=s240-c-k-c0x00ffffff-no-rj",
       "subscribers": 4,
-      "total_views": 98,
-      "video_count": 13,
+      "total_views": 5602,
+      "video_count": 14,
       "views_28d": 0,
       "minutes_28d": 0,
       "subs_gained_28d": 0,
-      "views_pct": -100.0,
+      "views_pct": null,
       "subs_pct": null,
       "labels": [
-        "04-17",
         "04-18",
         "04-19",
         "04-20",
@@ -44,7 +43,8 @@
         "05-13",
         "05-14",
         "05-15",
-        "05-16"
+        "05-16",
+        "05-17"
       ],
       "views_series": [
         0,
@@ -116,17 +116,8 @@
           "title": "**These 4 words are destroying your success without you knowing**",
           "published_at": "2026-05-15",
           "thumbnail": "https://i.ytimg.com/vi/k_U-B3be6Vg/mqdefault.jpg",
-          "views": 1320,
+          "views": 1353,
           "likes": 20,
-          "duration": "0:22"
-        },
-        {
-          "id": "B-nE6pXMqvI",
-          "title": "**These 4 words are silently destroying your success**",
-          "published_at": "2026-05-15",
-          "thumbnail": "https://i.ytimg.com/vi/B-nE6pXMqvI/mqdefault.jpg",
-          "views": 1283,
-          "likes": 6,
           "duration": "0:22"
         },
         {
@@ -134,16 +125,25 @@
           "title": "**These 4 words are silently destroying your success**",
           "published_at": "2026-05-15",
           "thumbnail": "https://i.ytimg.com/vi/OLGh0pPaAE0/mqdefault.jpg",
-          "views": 998,
+          "views": 1351,
           "likes": 12,
           "duration": "0:10"
+        },
+        {
+          "id": "B-nE6pXMqvI",
+          "title": "**These 4 words are silently destroying your success**",
+          "published_at": "2026-05-15",
+          "thumbnail": "https://i.ytimg.com/vi/B-nE6pXMqvI/mqdefault.jpg",
+          "views": 1294,
+          "likes": 6,
+          "duration": "0:22"
         },
         {
           "id": "aLsXDfP_G0c",
           "title": "**History repeats itself in ways you won't see coming**",
           "published_at": "2026-05-15",
           "thumbnail": "https://i.ytimg.com/vi/aLsXDfP_G0c/mqdefault.jpg",
-          "views": 372,
+          "views": 405,
           "likes": 4,
           "duration": "0:35"
         },
@@ -152,7 +152,7 @@
           "title": "**Your comfort today is costing you decades of regret**",
           "published_at": "2026-05-15",
           "thumbnail": "https://i.ytimg.com/vi/W6paVaeSRp4/mqdefault.jpg",
-          "views": 8,
+          "views": 13,
           "likes": 0,
           "duration": "0:13"
         },
@@ -161,7 +161,7 @@
           "title": "**Your biggest win is setting you up for your biggest loss.**",
           "published_at": "2026-05-15",
           "thumbnail": "https://i.ytimg.com/vi/rZeSKBhs1BA/mqdefault.jpg",
-          "views": 3,
+          "views": 6,
           "likes": 0,
           "duration": "0:17"
         }
@@ -171,7 +171,7 @@
       "id": "UCqefX-IKZM41O06kc_tQ68Q",
       "title": "Health4You",
       "handle": "@health4youprime",
-      "thumbnail": "https://yt3.ggpht.com/ytc/AIdro_nAt6g6WaKLnrN3laVMdZGBKMMxqX-BzkMoyE5xwPrSmvVSfviAg4AXAEXzSqB9NDNuyg=s240-c-k-c0x00ffffff-no-rj",
+      "thumbnail": "https://yt3.ggpht.com/Ww2waYEVvpgyBgAUvEFYQ9xqaBNJCW8LL4UgEyYOz9AXpsmykc_1IgE_l_iyXOAHyvgkWa8eCg=s240-c-k-c0x00ffffff-no-rj",
       "subscribers": 0,
       "total_views": 0,
       "video_count": 0,
@@ -181,7 +181,6 @@
       "views_pct": null,
       "subs_pct": null,
       "labels": [
-        "04-17",
         "04-18",
         "04-19",
         "04-20",
@@ -210,7 +209,8 @@
         "05-13",
         "05-14",
         "05-15",
-        "05-16"
+        "05-16",
+        "05-17"
       ],
       "views_series": [
         0,
